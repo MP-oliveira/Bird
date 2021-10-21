@@ -6,6 +6,24 @@ sprites.src = './sprites.png';
 const canvas = document.querySelector('canvas');
 const contexto = canvas.getContext('2d');
 
+const mensagemGetReady = {
+    spriteX: 134,
+    spriteY: 0,
+    largura: 174,
+    altura: 152,
+    x: (canvas.width / 2) - (174 / 2),
+    y: 50,
+    desenha() {
+        contexto.drawImage(
+            sprites, 
+            mensagemGetReady.spriteX, mensagemGetReady.spriteY, // sprite x e sprite y
+            mensagemGetReady.largura, mensagemGetReady.altura, //  tamanho do recorte na sprite
+            mensagemGetReady.x, mensagemGetReady.y, 
+            mensagemGetReady.largura, mensagemGetReady.altura,
+        );
+    },
+};
+
 
 const chao = {
     spriteX: 0,
@@ -87,16 +105,55 @@ const planoDeFundo = {
     },
 };
 
+// telas
+let telaAtiva = {};
+
+
+function mudaParaTela(novaTela){
+    telaAtiva = novaTela;
+
+}
+const Telas = {
+    INICIO: {
+        desenha(){
+            planoDeFundo.desenha();
+            chao.desenha();
+            flappyBird.desenha();
+            mensagemGetReady.desenha();
+        },
+        click(){
+            mudaParaTela(Telas.JOGO);
+        },
+        atualiza(){
+            
+        }
+    }
+};
+
+Telas.JOGO ={
+    desenha(){
+        planoDeFundo.desenha();
+        chao.desenha();
+        flappyBird.desenha();
+    },
+    atualiza(){
+        flappyBird.atualiza();    
+    }
+};  
 
 function loop(){
-    flappyBird.atualiza();
-    planoDeFundo.desenha();
-    chao.desenha();
-    flappyBird.desenha();
-
     
- 
+    telaAtiva.desenha();
+    telaAtiva.atualiza();
+    
     requestAnimationFrame(loop)
 }
 
+window.addEventListener('click', function(){
+    if(telaAtiva.click){
+        telaAtiva.click();
+    }
+})
+
+mudaParaTela(Telas.INICIO);
 loop();
